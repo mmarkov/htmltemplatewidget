@@ -1,0 +1,41 @@
+<project name="GDWidgets" basedir="." default="build_jar">
+
+	<property environment="env" />
+
+	<property name="build.dir" value="dest" />
+
+	<target name="build_jar" description="build gdwidgets.jar">
+		<fail unless="env.GWT_HOME">Please set system property GWT_HOME to folder where you instal Google Web Toolkit</fail>
+		<echo>JAVA_HOME = ${env.JAVA_HOME}</echo>
+		<echo>GWT_HOME = ${env.GWT_HOME}</echo>
+		<delete dir="tmp" />
+		<delete dir="tmp-bin" />
+		<mkdir dir="tmp" />
+		<mkdir dir="tmp-bin" />
+		<javac srcdir="src" destdir="tmp-bin" debug="true">
+			<classpath>
+				<fileset dir="lib" />
+				<fileset file="${env.GWT_HOME}/gwt-user.jar">
+				</fileset>
+			</classpath>
+		</javac>
+		<copy todir="tmp-bin">
+			<fileset dir="src">
+			</fileset>
+		</copy>
+
+		<mkdir dir="${build.dir}" />
+
+		<jar destfile="${build.dir}/gdwidgets.jar" basedir="tmp-bin">
+			<fileset dir="tmp" />
+		</jar>
+
+		<delete dir="tmp-bin" />
+		<delete dir="tmp" />
+	</target>
+
+	<target name="deleteGwtCache" description="delete GWT Cache">
+		<delete dir=".gwt-cache" />
+	</target>
+
+</project>

@@ -1,4 +1,4 @@
-#List of ideas for next version of HTML Template Widget.
+  #List of ideas for next version of HTML Template Widget.
 
 = Introduction =
 
@@ -7,5 +7,5 @@ This page contains ideas from newsgroups and from internal experience about html
 
 = Details =
 
-#1. Implement provider model for template content (to be able implement alternative for files like database, resource, in code etc.) 
-#2. Better support and samples for I18N
+  #1. Implement provider model for template content (to be able implement alternative for files like database, resource, in code etc.) 
+  #2. Better support and samples for I18N

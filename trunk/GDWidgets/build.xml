@@ -26,7 +26,7 @@
 
 		<mkdir dir="${build.dir}" />
 
-		<jar destfile="${build.dir}/gdwidgets.jar" basedir="tmp-bin">
+		<jar destfile="${build.dir}/gdwidgets05022008.jar" basedir="tmp-bin">
 			<fileset dir="tmp" />
 		</jar>
 

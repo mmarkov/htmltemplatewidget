@@ -28,178 +28,178 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class HTMLTemplateWidget extends HTML {
 
-    private Map widgets = new HashMap();
-    
-    private int enabled = 0;
+	private Map widgets = new HashMap();
 
-    private boolean callback = false;
+	private int enabled = 0;
 
-    /**
-     * Creates a HTMLWidget with HTML from the given HTML file
-     * 
-     * @param htmlContextFileName
-     *            name of HTML file with context without URL prefix of the
-     *            module
-     * 
-     */
+	private boolean callback = false;
 
-    public HTMLTemplateWidget(String htmlContextFileName) {
-        super();
-        callback = false;
-        String url = GWT.getModuleBaseURL() + htmlContextFileName;
+	/**
+	 * Creates a HTMLWidget with HTML from the given HTML file
+	 * 
+	 * @param htmlContextFileName
+	 *            name of HTML file with context without URL prefix of the
+	 *            module
+	 * 
+	 */
 
-        RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, url);
+	public HTMLTemplateWidget(String htmlContextFileName) {
+		super();
+		callback = false;
+		String url = GWT.getModuleBaseURL() + htmlContextFileName;
 
-        try {
-            Request response = builder.sendRequest(Long.toString(System
-                    .currentTimeMillis()), new RequestCallback() {
-                public void onError(Request request, Throwable exception) {
-                    System.out.println(exception.getMessage());
-                    callback = false;
-                }
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, url);
 
-                public void onResponseReceived(Request request,
-                        Response response) {
-                    setHTML(response.getText());
-                    if (enabled >= 0) {
-                        try {
-                            generateWidgets();
-                        } catch (ElementNotFound e) {
-                            onError(request, e);
-                        }
-                    }
-                    callback = true;
-                }
-            });
-        } catch (RequestException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+		try {
+			Request response = builder.sendRequest(Long.toString(System
+					.currentTimeMillis()), new RequestCallback() {
+				public void onError(Request request, Throwable exception) {
+					System.out.println(exception.getMessage());
+					callback = false;
+				}
 
-    /**
-     * Adds the <code>widget</code> with given <code>id</code> to the
-     * HTMLWidget widgets list.
-     * 
-     * @param id
-     *            the <code>id</code> of widget being added.
-     * @param widget
-     *            the <code>widget</code> being added.
-     */
+				public void onResponseReceived(Request request,
+						Response response) {
+					setHTML(response.getText());
+					if (enabled >= 0) {
+						try {
+							generateWidgets();
+						} catch (ElementNotFound e) {
+							onError(request, e);
+						}
+					}
+					callback = true;
+				}
+			});
+		} catch (RequestException e) {
+			System.out.println(e.getMessage());
+		}
+	}
 
-    public boolean addWidget(String id, Widget widget) {
+	/**
+	 * Adds the <code>widget</code> with given <code>id</code> to the
+	 * HTMLWidget widgets list.
+	 * 
+	 * @param id
+	 *            the <code>id</code> of widget being added.
+	 * @param widget
+	 *            the <code>widget</code> being added.
+	 */
 
-        widgets.put(id, widget);
-        if (enabled >= 0 && callback) {
-            ElementTO element;
-            try {
-                element = removeChildElement(id);
-                AttachWidget attachWidget = null;
-                
-                if (!widget.isAttached()) {
-                    attachWidget = new AttachWidget(widget);
-                }else {
-                    attachWidget = (AttachWidget) widget.getParent();
-                }
-                addChildElement(element, attachWidget);
-            } catch (ElementNotFound e) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public boolean addWidget(String id, Widget widget) {
 
-    /**
-     * Removes the widget with given <code>id</code> from the HTMLWidget
-     * widgets list.
-     * 
-     * @param id
-     *            the <code>id</code> of widget being removed.
-     * @throws ElementNotFound
-     */
+		widgets.put(id, widget);
+		if (enabled >= 0 && callback) {
+			ElementTO element;
+			try {
+				element = removeChildElement(id);
+				AttachWidget attachWidget = null;
 
-    public void removeWidget(String id) throws ElementNotFound {
+				if (!widget.isAttached()) {
+					attachWidget = new AttachWidget(widget);
+				} else {
+					attachWidget = (AttachWidget) widget.getParent();
+				}
+				addChildElement(element, attachWidget);
+			} catch (ElementNotFound e) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-        widgets.remove(id);
+	/**
+	 * Removes the widget with given <code>id</code> from the HTMLWidget
+	 * widgets list.
+	 * 
+	 * @param id
+	 *            the <code>id</code> of widget being removed.
+	 * @throws ElementNotFound
+	 */
 
-        if (enabled >= 0 && callback) {
-            removeChildElement(id);
-        }
-    }
+	public void removeWidget(String id) throws ElementNotFound {
 
-    /**
-     * Disable updating of widget's HTML on page when <code>addWidget()</code>,
-     * <code>removeWidget()</code> and <code>replaceWidget()</code> methods
-     * calls. <br>
-     * <br>
-     * <b>Note:</b> disabling is incremental, and if you want enable updating,
-     * you must call <code>enableUpdate()</code> method at least the same
-     * times as <code>disableUpdate()</code> was call.
-     * 
-     */
+		widgets.remove(id);
 
-    public void disableUpdate() {
-        enabled--;
-    }
+		if (enabled >= 0 && callback) {
+			removeChildElement(id);
+		}
+	}
 
-    /**
-     * Enable updating of widget's HTML on page when <code>addWidget()</code>,
-     * <code>removeWidget()</code> and <code>replaceWidget()</code> methods
-     * calls. <br>
-     * <br>
-     * <b>Note:</b> enabling is incremental, and if you want disable updating,
-     * you must call <code>disableUpdate()</code> method at least the same
-     * times as <code>enableUpdate()</code> was call.
-     * 
-     * @throws ElementNotFound
-     * 
-     */
+	/**
+	 * Disable updating of widget's HTML on page when <code>addWidget()</code>,
+	 * <code>removeWidget()</code> and <code>replaceWidget()</code> methods
+	 * calls. <br>
+	 * <br>
+	 * <b>Note:</b> disabling is incremental, and if you want enable updating,
+	 * you must call <code>enableUpdate()</code> method at least the same
+	 * times as <code>disableUpdate()</code> was call.
+	 * 
+	 */
 
-    public void enabledUpdate() throws ElementNotFound {
-        enabled++;
-        if (enabled == 0 && callback) {
-            generateWidgets();
-        }
-    }
+	public void disableUpdate() {
+		enabled--;
+	}
 
-    private void generateWidgets() throws ElementNotFound {
+	/**
+	 * Enable updating of widget's HTML on page when <code>addWidget()</code>,
+	 * <code>removeWidget()</code> and <code>replaceWidget()</code> methods
+	 * calls. <br>
+	 * <br>
+	 * <b>Note:</b> enabling is incremental, and if you want disable updating,
+	 * you must call <code>disableUpdate()</code> method at least the same
+	 * times as <code>enableUpdate()</code> was call.
+	 * 
+	 * @throws ElementNotFound
+	 * 
+	 */
 
-        for (Iterator it = widgets.keySet().iterator(); it.hasNext();) {
+	public void enabledUpdate() throws ElementNotFound {
+		enabled++;
+		if (enabled == 0 && callback) {
+			generateWidgets();
+		}
+	}
 
-            String id = it.next().toString();
+	private void generateWidgets() throws ElementNotFound {
 
-            Widget widget = (Widget) widgets.get(id);
+		for (Iterator it = widgets.keySet().iterator(); it.hasNext();) {
 
-            ElementTO element = removeChildElement(id);
-            
-            AttachWidget attachWidget = null;
-            
-            if (!widget.isAttached()) {
-                attachWidget = new AttachWidget(widget);
-            }else {
-                attachWidget = (AttachWidget) widget.getParent();
-            }
-            
-            addChildElement(element, attachWidget);
-        }
-    }
+			String id = it.next().toString();
 
-    private Element findElementById(Element element, String id) {
-        Element result = null;
-        if (element != null) {
-            String currentId = DOM.getElementProperty(element, "id");
-            if (id.equals(currentId)) {
-                return element;
-            }
-            int count = DOM.getChildCount(element);
-            for (int i = 0; i < count && result == null; i++) {
-                Element child = DOM.getChild(element, i);
-                result = findElementById(child, id);
-            }
-        }
-        return result;
-    }
+			Widget widget = (Widget) widgets.get(id);
 
-    private ElementTO removeChildElement(String id) throws ElementNotFound {
+			ElementTO element = removeChildElement(id);
+
+			AttachWidget attachWidget = null;
+
+			if (!widget.isAttached()) {
+				attachWidget = new AttachWidget(widget);
+			} else {
+				attachWidget = (AttachWidget) widget.getParent();
+			}
+
+			addChildElement(element, attachWidget);
+		}
+	}
+
+	private Element findElementById(Element element, String id) {
+		Element result = null;
+		if (element != null) {
+			String currentId = DOM.getElementProperty(element, "id");
+			if (id.equals(currentId)) {
+				return element;
+			}
+			int count = DOM.getChildCount(element);
+			for (int i = 0; i < count && result == null; i++) {
+				Element child = DOM.getChild(element, i);
+				result = findElementById(child, id);
+			}
+		}
+		return result;
+	}
+
+	private ElementTO removeChildElement(String id) throws ElementNotFound {
         ElementTO element = new ElementTO();
         element.setId(id);
 
@@ -213,7 +213,7 @@ public class HTMLTemplateWidget extends HTML {
                 element.setStyle(style);
             }
 
-            String className = DOM.getElementAttribute(child, "className");
+            String className = DOM.getElementProperty(child, "className");
             if (className != null && className.length() > 0) {
                 element.setClassName(className);
             }
@@ -227,25 +227,25 @@ public class HTMLTemplateWidget extends HTML {
         return element;
     }
 
-    private void addChildElement(ElementTO element, Widget widget) {
-        Element child = widget.getElement();
-        DOM.setElementAttribute(child, "id", element.getId());
-        String style = element.getStyle();
-        String className = element.getClassName();
-        if (style != null && style.length() > 0) {
-            DOM.setStyleAttribute(child, "cssText", style);
-        }
-        if (className != null && className.length() > 0) {
-            DOM.setElementAttribute(child, "className", className);
-        }
-        DOM.insertChild(element.getParent(), child, element.getIndex());
-    }
+	private void addChildElement(ElementTO element, Widget widget) {
+		Element child = widget.getElement();
+		DOM.setElementAttribute(child, "id", element.getId());
+		String style = element.getStyle();
+		String className = element.getClassName();
+		if (style != null && style.length() > 0) {
+			DOM.setStyleAttribute(child, "cssText", style);
+		}
+		if (className != null && className.length() > 0) {
+			DOM.setElementProperty(child, "className", className);
+		}
+		DOM.insertChild(element.getParent(), child, element.getIndex());
+	}
 
-    class AttachWidget extends Composite {
-        public AttachWidget(Widget widget) {
-            initWidget(widget);
-            onAttach();
-        }
-    }
+	class AttachWidget extends Composite {
+		public AttachWidget(Widget widget) {
+			initWidget(widget);
+			onAttach();
+		}
+	}
 
 }
